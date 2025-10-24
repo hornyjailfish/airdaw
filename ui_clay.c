@@ -45,7 +45,7 @@ void build_button(const char *label, uint32_t id, bool active, int *clicked_out,
   Clay_ElementId uid = CLAY_SIDI(text,id);
   CLAY(button(uid, active, clicked_out, ui_state)) {
     CLAY_TEXT(text,
-              CLAY_TEXT_CONFIG({.textColor = COLOR_TEXT, .fontSize = 10}));
+              CLAY_TEXT_CONFIG({.textColor = COLOR_TEXT, .fontSize = 16}));
   };
 };
 
@@ -106,7 +106,7 @@ void build_track_ui(UIState *ui_state, Track *track, int track_index) {
   }) {
     // Track name
     CLAY_TEXT(text,
-              CLAY_TEXT_CONFIG({.textColor = COLOR_TEXT, .fontSize = 12}));
+              CLAY_TEXT_CONFIG({.textColor = COLOR_TEXT, .fontSize = 18}));
 
     // Control buttons row
     CLAY({
@@ -154,7 +154,7 @@ void build_track_ui(UIState *ui_state, Track *track, int track_index) {
         build_vertical_fader(track->volume, track_index, 200);
         CLAY_TEXT(
             CLAY_STRING("VOL"),
-            CLAY_TEXT_CONFIG({.textColor = COLOR_TEXT_DIM, .fontSize = 8}));
+            CLAY_TEXT_CONFIG({.textColor = COLOR_TEXT_DIM, .fontSize = 12}));
       }
 
       // Pan control
@@ -180,7 +180,7 @@ void build_track_ui(UIState *ui_state, Track *track, int track_index) {
 
         CLAY_TEXT(
             CLAY_STRING("PAN"),
-            CLAY_TEXT_CONFIG({.textColor = COLOR_TEXT_DIM, .fontSize = 8}));
+            CLAY_TEXT_CONFIG({.textColor = COLOR_TEXT_DIM, .fontSize = 12}));
       }
 
       // Meters
@@ -210,15 +210,16 @@ static void build_master_section(AudioEngine *engine, UIState *ui_state) {
        .border = {.width = CLAY_BORDER_ALL(3), .color = COLOR_BUTTON_ACTIVE}}) {
     // Master label
     CLAY_TEXT(CLAY_STRING("MASTER"),
-              CLAY_TEXT_CONFIG({.textColor = COLOR_TEXT, .fontSize = 18}));
+              CLAY_TEXT_CONFIG({.textColor = COLOR_TEXT, .fontSize = 24}));
 
     // Master play/stop button
     bool playing = atomic_load(&engine->playing);
     clicked = 0;
     build_button(playing ? "STOP ALL" : "PLAY ALL", 0, playing, &clicked,
                  ui_state);
-    /* if (clicked) */
-    /*   g_ui_state->master_play_toggle = true; */
+    if (clicked) {
+      ui_state->master_play_toggle = true;
+}
 
     // Master volume + meters
     CLAY({.id = CLAY_ID("MasterControls"),
@@ -234,7 +235,7 @@ static void build_master_section(AudioEngine *engine, UIState *ui_state) {
         build_vertical_fader(engine->master_volume, 9999, 250);
         CLAY_TEXT(
             CLAY_STRING("MASTER"),
-            CLAY_TEXT_CONFIG({.textColor = COLOR_TEXT_DIM, .fontSize = 8}));
+            CLAY_TEXT_CONFIG({.textColor = COLOR_TEXT_DIM, .fontSize = 12}));
       }
 
       // Master meters
@@ -255,9 +256,9 @@ static void build_master_section(AudioEngine *engine, UIState *ui_state) {
                      .sizing = {CLAY_SIZING_GROW(), CLAY_SIZING_FIXED(15)},
                      .childAlignment = {.x = CLAY_ALIGN_X_RIGHT}}}) {
       CLAY_TEXT(CLAY_STRING("L"), CLAY_TEXT_CONFIG({.textColor = COLOR_TEXT_DIM,
-                                                    .fontSize = 10}));
+                                                    .fontSize = 12}));
       CLAY_TEXT(CLAY_STRING("R"), CLAY_TEXT_CONFIG({.textColor = COLOR_TEXT_DIM,
-                                                    .fontSize = 10}));
+                                                    .fontSize = 12}));
     }
   }
 }
@@ -275,8 +276,9 @@ static void build_toolbar(AudioEngine *engine, UIState *ui_state) {
     // Add track button
     clicked = 0;
     build_button("+ ADD TRACK", 0, false, &clicked, ui_state);
-    /* if (clicked) */
-    /*   g_ui_state->add_track_requested = true; */
+    if (clicked) {
+      ui_state->add_track_requested = true;
+}
 
     // Status text
     char *status = malloc(sizeof(char) * 255);
@@ -287,7 +289,7 @@ static void build_toolbar(AudioEngine *engine, UIState *ui_state) {
     Clay_String text = {
         .isStaticallyAllocated = false, .chars = status, .length = len};
     CLAY_TEXT(text,
-              CLAY_TEXT_CONFIG({.textColor = COLOR_TEXT, .fontSize = 10}));
+              CLAY_TEXT_CONFIG({.textColor = COLOR_TEXT, .fontSize = 20}));
   }
 }
 
@@ -320,7 +322,7 @@ Clay_RenderCommandArray ui_build_layout(UIState *ui_state,
                 CLAY_TEXT_CONFIG({.textColor = COLOR_TEXT, .fontSize = 24}));
       CLAY_TEXT(
           CLAY_STRING("Miniaudio + Raylib + Clay UI"),
-          CLAY_TEXT_CONFIG({.textColor = COLOR_TEXT_DIM, .fontSize = 10}));
+          CLAY_TEXT_CONFIG({.textColor = COLOR_TEXT_DIM, .fontSize = 16}));
     }
 
     // Main content area (tracks + master)

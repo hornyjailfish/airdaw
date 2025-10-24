@@ -1,5 +1,5 @@
-// audio_engine.c - Audio Engine Implementation
-// Real-time audio processing with per-channel effects
+#define MINIAUDIO_IMPLEMENTATION
+#include "vendor/miniaudio/miniaudio.h"
 
 #include "audio_engine.h"
 #include <raylib.h>
@@ -13,32 +13,29 @@
 // LOGGING
 // ============================================================================
 
-static void miniaudio_log_callback(void* pUserData, ma_uint32 level, const char* pMessage) {
+static void miniaudio_log_callback(void* pUserData, unsigned int level, const char* pMessage) {
     (void)pUserData;
 
     int raylib_level = LOG_INFO;
-    const char* level_str = "INFO";
 
     switch (level) {
         case MA_LOG_LEVEL_DEBUG:
             raylib_level = LOG_DEBUG;
-            level_str = "DEBUG";
             break;
         case MA_LOG_LEVEL_INFO:
             raylib_level = LOG_INFO;
-            level_str = "INFO";
             break;
         case MA_LOG_LEVEL_WARNING:
             raylib_level = LOG_WARNING;
-            level_str = "WARNING";
             break;
         case MA_LOG_LEVEL_ERROR:
             raylib_level = LOG_ERROR;
-            level_str = "ERROR";
             break;
-    }
+        default:
+            raylib_level = LOG_INFO;
 
-    TraceLog(raylib_level, "[miniaudio][%s] %s", level_str, pMessage);
+    }
+    TraceLog(raylib_level, "[miniaudio]: %s", pMessage);
 }
 
 // ============================================================================
@@ -153,10 +150,8 @@ static void audio_callback(ma_device* device, void* output_buffer, const void* i
     for (int t = 0; t < engine->track_count; t++) {
         Track* track = &engine->tracks[t];
 
-        // Skip if muted or not playing
         if (track->mute || !atomic_load(&track->playing)) continue;
 
-        // Skip if solo mode is active and this track is not soloed
         if (any_solo && !track->solo) continue;
 
         // Reset track meters
@@ -172,16 +167,16 @@ static void audio_callback(ma_device* device, void* output_buffer, const void* i
         // Generate audio (simple sine wave oscillator)
         for (ma_uint32 i = 0; i < frame_count; i++) {
             float sample = sinf(track->phase) * track->volume * 0.3F;
-            track->phase += 2.0F * 3.14159265359F * track->frequency / SAMPLE_RATE;
-            if (track->phase > 2.0F * 3.14159265359F) {
-                track->phase -= 2.0F * 3.14159265359F;
+            track->phase += 2.0F * MA_PI * track->frequency / SAMPLE_RATE;
+            if (track->phase > 2.0F * MA_PI) {
+                track->phase -= 2.0F * MA_PI;
             }
 
             // Apply panning (constant power)
             float pan = track->pan;
-            float left_gain = cosf((pan + 1.0F) * 3.14159265359F / 4.0F);
-            float right_gain = sinf((pan + 1.0F) * 3.14159265359F / 4.0F);
-
+            float left_gain = cosf((pan + 1.0F) * MA_PI / 4.0F);
+            float right_gain = sinf((pan + 1.0F) * MA_PI / 4.0F);
+ma_panner panyi;
             temp_left[i] = sample * left_gain;
             temp_right[i] = sample * right_gain;
         }
@@ -234,17 +229,16 @@ static void audio_callback(ma_device* device, void* output_buffer, const void* i
 // ============================================================================
 
 bool audio_engine_init(AudioEngine* engine) {
-    memset(engine, 0, sizeof(AudioEngine));
+    /* memset(engine, 0, sizeof(AudioEngine)); */
 
     engine->master_volume = 0.75F;
     engine->track_count = 0;
     atomic_store(&engine->playing, false);
 
-    // TraceLog(LOG_INFO, "[miniaudio] Initializing audio engine...");
-
     // Initialize miniaudio logging
-    ma_log_init(NULL, &engine->log);
-    ma_log_register_callback(&engine->log, ma_log_callback_init(miniaudio_log_callback, NULL));
+    ma_allocation_callbacks alloc_cb = ma_allocation_callbacks_init_default();
+    ma_log_init(&alloc_cb, &engine->log);
+    ma_log_register_callback(&engine->log,ma_log_callback_init(miniaudio_log_callback, NULL));
 
     // Configure miniaudio device
     engine->device_config = ma_device_config_init(ma_device_type_playback);
@@ -254,31 +248,32 @@ bool audio_engine_init(AudioEngine* engine) {
     engine->device_config.dataCallback = audio_callback;
     engine->device_config.pUserData = engine;
     engine->device_config.periodSizeInFrames = BUFFER_SIZE;
-     /* engine->device.pContext->pLog = &engine->log; */
 
     // Initialize device
     if (ma_device_init(NULL, &engine->device_config, &engine->device) != MA_SUCCESS) {
-        TraceLog(LOG_ERROR, "[miniaudio] Failed to initialize audio device");
+        ma_log_post(&engine->log, MA_LOG_LEVEL_ERROR, "Failed to initialize audio device");
         ma_log_uninit(&engine->log);
         return false;
     }
     engine->device.pContext->pLog = &engine->log;
-    TraceLog(LOG_INFO, "[miniaudio] Audio device initialized: %s", engine->device.playback.name);
-    TraceLog(LOG_INFO, "[miniaudio] Format: %s, Channels: %u, Sample Rate: %u",
+    ma_log *lg = ma_device_get_log(&engine->device);
+    ma_log_post(lg, MA_LOG_LEVEL_INFO, "TEST LOGING");
+    ma_log_postf(&engine->log, MA_LOG_LEVEL_INFO, "Audio device initialized: %s", engine->device.playback.name);
+    ma_log_postf(&engine->log, MA_LOG_LEVEL_INFO, "Format: %s, Channels: %u, Sample Rate: %u",
              ma_get_format_name(engine->device.playback.format),
              engine->device.playback.channels,
              engine->device.sampleRate);
 
     // Start device
     if (ma_device_start(&engine->device) != MA_SUCCESS) {
-        TraceLog(LOG_ERROR, "[miniaudio] Failed to start audio device");
+        ma_log_post(&engine->log, MA_LOG_LEVEL_ERROR, "Failed to start audio device");
         ma_device_uninit(&engine->device);
         ma_log_uninit(&engine->log);
         return false;
     }
 
     atomic_store(&engine->initialized, true);
-    TraceLog(LOG_INFO, "[miniaudio] Audio engine started successfully");
+    ma_log_post(&engine->log, MA_LOG_LEVEL_INFO, "Audio engine started successfully");
     return true;
 }
 

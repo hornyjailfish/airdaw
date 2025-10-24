@@ -1,5 +1,3 @@
-// audio_engine.h - Audio Engine with Effects Support
-// Handles real-time audio processing, track management, and per-channel effects
 #pragma once
 #ifndef AUDIO_ENGINE_H
 #define AUDIO_ENGINE_H
