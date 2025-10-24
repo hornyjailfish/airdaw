@@ -18,9 +18,9 @@ CompileFlags:
     - "-DNOMINMAX"
 
     # Include paths
-    - "-IC:/Users/5q/scoop/apps/raylib/current/include"
-    - "-Ivendor"
     - "-I."
+    - "-Ivendor"
+    - "-Ivendor/raylib/include"
     - "-Ivendor/miniaudio"
     - "-Ivendor/clay"
     - "-Ivendor/sokol"
@@ -34,6 +34,7 @@ CompileFlags:
 Diagnostics:
   UnusedIncludes: Strict
   MissingIncludes: Strict
+  MissingParentheses: Ignore
 
   ClangTidy:
     Add:
