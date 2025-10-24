@@ -26,7 +26,7 @@ if %ERRORLEVEL% EQU 0 (
 echo.
 
 echo [3/3] Verifying Raylib installation...
-set RAYLIB_PATH=C:\Users\5q\scoop\apps\raylib\current\include\raylib.h
+set RAYLIB_PATH=vendor\raylib\include\raylib.h
 if exist "%RAYLIB_PATH%" (
     echo [OK] Raylib found at %RAYLIB_PATH%
 ) else (

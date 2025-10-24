@@ -19,8 +19,8 @@ SOKOL_LIBS_LINUX := "-lX11 -lXi -lXcursor -lpthread -lm -ldl -lGL"
 
 # Raylib version settings
 # Note: miniaudio is header-only and doesn't need extra Windows libs
-RAYLIB_INCLUDES := "-IC:/Users/5q/scoop/apps/raylib/current/include -Ivendor -Ivendor/miniaudio -Ivendor/clay"
-RAYLIB_LIBS_WIN := "-LC:/Users/5q/scoop/apps/raylib/current/lib -lraylibdll -lopengl32"
+RAYLIB_INCLUDES := "-Ivendor/raylib/include -Ivendor -Ivendor/miniaudio -Ivendor/clay"
+RAYLIB_LIBS_WIN := "-Lvendor/raylib/lib -lraylibdll -lopengl32"
 RAYLIB_LIBS_MAC := "-lraylib -framework Cocoa -framework OpenGL -framework IOKit"
 RAYLIB_LIBS_LINUX := "-lraylib -lGL -lm -lpthread -ldl -lrt -lX11"
 
@@ -167,7 +167,7 @@ check:
     @if exist vendor\ctest\ctest.h (echo [OK] ctest found) else (echo [MISSING] ctest not found - needed for tests)
     @echo ""
     @echo "Checking Raylib (external)..."
-    @if exist C:\Users\5q\scoop\apps\raylib\current\lib\raylib.dll (echo [OK] Raylib DLL found) else (echo [MISSING] Raylib not found)
+    @if exist vendor\raylib\lib\raylib.dll (echo [OK] Raylib DLL found) else (echo [MISSING] Raylib not found)
     @echo "==================================="
     @echo ""
     @echo "Note: Miniaudio is header-only (no libs needed)"

@@ -7,7 +7,7 @@ $cflags = "-std=c11 -Wall -Wextra -O2"
 $defines = "-D_CRT_SECURE_NO_WARNINGS -DNOGDI -DWIN32_LEAN_AND_MEAN -DNOMINMAX"
 
 # Raylib include path
-$raylibInclude = "C:/Users/5q/scoop/apps/raylib/current/include"
+$raylibInclude = "vendor/raylib/include"
 
 # Create compile commands array
 $commands = @(
