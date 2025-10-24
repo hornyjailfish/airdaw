@@ -1,0 +1,49 @@
+# AirDAW clangd configuration
+# Clean approach following miniaudio documentation (header-only)
+
+CompileFlags:
+  Add:
+    # C standard
+    - "-std=c11"
+
+    # Warnings
+    - "-Wall"
+    - "-Wextra"
+
+    # Platform-specific defines (prevent Windows GDI conflicts with raylib)
+    - "-D_CRT_SECURE_NO_WARNINGS"
+    - "-DNOGDI"
+    - "-DNOUSER"
+    - "-DWIN32_LEAN_AND_MEAN"
+    - "-DNOMINMAX"
+
+    # Include paths
+    - "-IC:/Users/5q/scoop/apps/raylib/current/include"
+    - "-Ivendor"
+    - "-I."
+    - "-Ivendor/miniaudio"
+    - "-Ivendor/clay"
+    - "-Ivendor/sokol"
+    - "-Ivendor/ctest"
+
+  Remove:
+    # Remove problematic flags that clangd doesn't understand
+    - "-mwindows"
+    - "-mconsole"
+
+Diagnostics:
+  UnusedIncludes: Strict
+  MissingIncludes: Strict
+
+  ClangTidy:
+    Add:
+      - "readability-*"
+      - "modernize-*"
+      - "bugprone-*"
+    Remove:
+      - "readability-magic-numbers"
+      - "modernize-use-trailing-return-type"
+
+# Index configuration
+Index:
+  Background: Build

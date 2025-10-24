@@ -1,0 +1,27 @@
+﻿[
+    {
+        "directory":  "C:\\Users\\5q\\gits\\airdaw",
+        "file":  "main_raylib.c",
+        "command":  "clang -std=c11 -Wall -Wextra -O2 -D_CRT_SECURE_NO_WARNINGS -DNOGDI -DWIN32_LEAN_AND_MEAN -DNOMINMAX -IC:/Users/5q/scoop/apps/raylib/current/include -Ivendor -Ivendor/miniaudio -c main_raylib.c"
+    },
+    {
+        "directory":  "C:\\Users\\5q\\gits\\airdaw",
+        "file":  "main.c",
+        "command":  "clang -std=c11 -Wall -Wextra -O2 -D_CRT_SECURE_NO_WARNINGS -DNOGDI -DWIN32_LEAN_AND_MEAN -DNOMINMAX -Ivendor -Ivendor/clay -Ivendor/miniaudio -Ivendor/sokol -c main.c"
+    },
+    {
+        "directory":  "C:\\Users\\5q\\gits\\airdaw/tests",
+        "file":  "tests/test_audio_engine.c",
+        "command":  "clang -std=c11 -Wall -Wextra -O2 -D_CRT_SECURE_NO_WARNINGS -DNOGDI -DWIN32_LEAN_AND_MEAN -DNOMINMAX -I../vendor -I../vendor/ctest -I../vendor/miniaudio -c test_audio_engine.c"
+    },
+    {
+        "directory":  "C:\\Users\\5q\\gits\\airdaw/tests",
+        "file":  "tests/test_audio_processing.c",
+        "command":  "clang -std=c11 -Wall -Wextra -O2 -D_CRT_SECURE_NO_WARNINGS -DNOGDI -DWIN32_LEAN_AND_MEAN -DNOMINMAX -I../vendor -I../vendor/ctest -I../vendor/miniaudio -c test_audio_processing.c"
+    },
+    {
+        "directory":  "C:\\Users\\5q\\gits\\airdaw/tests",
+        "file":  "tests/test_integration.c",
+        "command":  "clang -std=c11 -Wall -Wextra -O2 -D_CRT_SECURE_NO_WARNINGS -DNOGDI -DWIN32_LEAN_AND_MEAN -DNOMINMAX -I../vendor -I../vendor/ctest -I../vendor/miniaudio -c test_integration.c"
+    }
+]
